@@ -34,6 +34,7 @@ const (
 	MessageResourceSynced = "Network synced successfully"
 )
 
+// Controller is the controller implementation for network resources.
 type Controller struct {
 	// kubeClientSet is a standard kubernetes clientSet
 	kubeClientSet kubernetes.Interface
@@ -51,6 +52,7 @@ type Controller struct {
 	recorder record.EventRecorder
 }
 
+// NewController returns a new network controller
 func NewController(
 	kubeClientSet kubernetes.Interface,
 	networkClientSet clientset.Interface,
@@ -89,6 +91,10 @@ func NewController(
 	return controller
 }
 
+// Run will set up the event handlers for types we are interested in, as well
+// as syncing informer caches and starting workers. It will block until stopCh
+// is closed, at which point it will shut down the workQueue and wait for
+// workers to finish processing their current work items.
 func (c *Controller) Run(threadiness int, stopCh <-chan struct{}) error {
 	defer runtime.HandleCrash()
 	defer c.workQueue.ShutDown()
@@ -201,7 +207,7 @@ func (c *Controller) enqueueNetwork(obj interface{}) {
 }
 
 // enqueueNetworkForDelete takes a deleted Network resource and converts it
-// into a namespace/name  string which is then put onto the workQueue. This
+// into a namespace/name string which is then put onto the workQueue. This
 // method should *not be passed resources of any type other than Network.
 func (c *Controller) enqueueNetworkForDelete(obj interface{}) {
 	var (
